@@ -93,3 +93,18 @@ resource "azurerm_virtual_network_peering" "ai-hub" {
   allow_forwarded_traffic = true
   allow_gateway_transit = false
 }
+
+resource "azurerm_private_dns_zone" "this" {
+    for_each = toset(var.private_dns_zones)
+    name = each.key
+  resource_group_name = var.resource_group_name
+  tags = var.tags
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "this" {
+  for_each = toset(var.private_dns_zones)  
+  name = "link-${each.key}"
+  resource_group_name = var.resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.this[each.key].name
+  virtual_network_id = azurerm_virtual_network.this["hub"].id
+}

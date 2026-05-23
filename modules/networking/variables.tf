@@ -33,3 +33,7 @@ variable "tags" {
   type = map(string)
 }
 
+variable "private_dns_zones" {
+  type        = list(string)
+  description = "List of private DNS zone names to create in hub VNet"
+}
