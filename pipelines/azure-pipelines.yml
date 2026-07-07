@@ -24,7 +24,7 @@ stages:
               terraform fmt -check
             displayName: 'Check format'
             workingDirectory: '$(System.DefaultWorkingDirectory)'
-          - template: pipelines/templates/terraform-task.yml
+          - template: templates/terraform-task.yml
             parameters:
               serviceConnection: $(SERVICE_CONNECTION)
               displayName: 'Terraform Init'
@@ -33,7 +33,7 @@ stages:
               terraform validate
             displayName: 'code validate'
             workingDirectory: '$(System.DefaultWorkingDirectory)/$(workingDir)'
-          - template: pipelines/templates/terraform-task.yml
+          - template: templates/terraform-task.yml
             parameters:
               serviceConnection: $(SERVICE_CONNECTION)
               displayName: 'Terraform Plan'
@@ -55,12 +55,12 @@ stages:
           runOnce:
             deploy:
               steps:
-              - template: pipelines/templates/terraform-task.yml
+              - template: templates/terraform-task.yml
                 parameters:
                   serviceConnection: $(SERVICE_CONNECTION)
                   displayName: 'Terraform Init'
                   command: 'cd $(workingDir) && terraform init'
-              - template: pipelines/templates/terraform-task.yml
+              - template: templates/terraform-task.yml
                 parameters:
                   serviceConnection: $(SERVICE_CONNECTION)
                   displayName: 'Terraform Apply'
