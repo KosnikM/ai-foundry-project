@@ -1,0 +1,69 @@
+trigger: 
+  - none
+
+pr:
+  branches:
+    include:
+      - main
+variables:
+  - group: terraform-vars
+  - name: workingDir
+    value: 'environments/dev'
+stages:
+  - stage: Plan
+    displayName: 'Terraform Plan (CI)'
+    pool: self-hosted
+    jobs:
+      - job: Plan
+        steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: 'latest'
+          - powershell: |
+              terraform fmt -check
+            displayName: 'Check format'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+          - template: pipelines/templates/terraform-task.yml
+            parameters:
+              serviceConnection: $(SERVICE_CONNECTION)
+              displayName: 'Terraform Init'
+              command: 'cd $(workingDir) && terraform init'
+          - powershell: |
+              terraform validate
+            displayName: 'code validate'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/$(workingDir)'
+          - template: pipelines/templates/terraform-task.yml
+            parameters:
+              serviceConnection: $(SERVICE_CONNECTION)
+              displayName: 'Terraform Plan'
+              command: 'cd $(workingDir) && terraform plan -out=plan.tfplan'  
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Plan'
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/$(workingDir)/plan.tfplan'
+              artifact: 'tfplan'
+
+  - stage: Apply
+    displayName: 'Terraform Apply (CD)'
+    dependsOn: Plan
+    pool: self-hosted
+    jobs:
+      - deployment: Apply
+        environment: $(ENVIRONMENT)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - template: pipelines/templates/terraform-task.yml
+                parameters:
+                  serviceConnection: $(SERVICE_CONNECTION)
+                  displayName: 'Terraform Init'
+                  command: 'cd $(workingDir) && terraform init'
+              - template: pipelines/templates/terraform-task.yml
+                parameters:
+                  serviceConnection: $(SERVICE_CONNECTION)
+                  displayName: 'Terraform Apply'
+                  command: 'cd $(workingDir) && terraform apply --auto-approve'
+                      
+
