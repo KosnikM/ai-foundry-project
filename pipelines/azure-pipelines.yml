@@ -37,7 +37,7 @@ stages:
             parameters:
               serviceConnection: $(SERVICE_CONNECTION)
               displayName: 'Terraform Plan'
-              command: 'terraform plan -out=plan.tfplan'
+              command: 'terraform plan "-out=plan.tfplan"'
   
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Plan'
