@@ -13,11 +13,11 @@ steps:
       scriptType: 'ps'
       scriptLocation: 'inlineScript'
       addSpnToEnvironment: true
-      workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
       inlineScript: |
         $env:ARM_CLIENT_ID=$env:servicePrincipalId
         $env:ARM_OIDC_TOKEN=$env:idToken
         $env:ARM_TENANT_ID=$env:tenantId
         $env:ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
         $env:ARM_USE_OIDC="true"
+        cd "$(System.DefaultWorkingDirectory)\environments\dev"
         ${{ parameters.command }}
