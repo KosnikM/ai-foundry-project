@@ -28,7 +28,7 @@ stages:
             parameters:
               serviceConnection: $(SERVICE_CONNECTION)
               displayName: 'Terraform Init'
-              command: 'terraform -chdir=$(workingDir) init'
+              command: 'terraform init'
           - powershell: |
               terraform validate
             displayName: 'code validate'
@@ -37,7 +37,7 @@ stages:
             parameters:
               serviceConnection: $(SERVICE_CONNECTION)
               displayName: 'Terraform Plan'
-              command: 'terraform -chdir=environments/dev plan -out=plan.tfplan'
+              command: 'terraform plan -out=plan.tfplan'
   
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Plan'
@@ -60,11 +60,11 @@ stages:
                 parameters:
                   serviceConnection: $(SERVICE_CONNECTION)
                   displayName: 'Terraform Init'
-                  command: 'terraform -chdir=$(workingDir) init'
+                  command: 'terraform init'
               - template: templates/terraform-task.yml
                 parameters:
                   serviceConnection: $(SERVICE_CONNECTION)
                   displayName: 'Terraform Apply'
-                  command: 'terraform -chdir=$(workingDir) apply --auto-approve'
+                  command: 'terraform apply --auto-approve'
                       
 
