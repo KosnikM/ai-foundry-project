@@ -15,3 +15,9 @@ resource "azurerm_resource_group" "networking" {
   location = "polandcentral"
   tags     = local.default_tags
 }
+
+resource "azurerm_resource_group" "monitoring" {
+  name     = "rg-monitoring"
+  location = "polandcentral"
+  tags     = local.default_tags
+}
