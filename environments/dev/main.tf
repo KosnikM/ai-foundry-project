@@ -10,3 +10,8 @@ resource "azurerm_resource_group" "sweden_central" {
   tags = local.default_tags
 }
 
+resource "azurerm_resource_group" "networking" {
+  name     = "rg-networking"
+  location = "polandcentral"
+  tags     = local.default_tags
+}
