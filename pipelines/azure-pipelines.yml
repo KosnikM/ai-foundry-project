@@ -37,7 +37,8 @@ stages:
             parameters:
               serviceConnection: $(SERVICE_CONNECTION)
               displayName: 'Terraform Plan'
-              command: 'terraform -chdir=$(workingDir) plan -out=plan.tfplan'  
+              command: 'terraform -chdir=environments/dev plan -out=plan.tfplan'
+  
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Plan'
             inputs:
