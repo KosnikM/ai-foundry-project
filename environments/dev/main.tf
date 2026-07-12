@@ -348,3 +348,17 @@ module "security" {
     : id if startswith(key, "spoke-")
   ]
 }
+
+module "keyvault" {
+  source              = "../../modules/keyvault"
+  resource_group_name = azurerm_resource_group.security.name
+  location            = local.location
+  tags                = local.default_tags
+  tenant_id           = "a5e68198-16a0-4357-914c-17c29b1537d9"
+  admin_object_id     = "c77ee7b8-e970-45be-8020-bcde1272cd11"
+  secrets = {
+    "jumpbox-admin-password" = "Placeholder#2024!"
+    "azure-openai-key"       = "Placeholder-openai-key#2025!"
+    "azure-openai-endpoint"  = "Placeholder-openai-endpoint#2026!"
+  }
+}
