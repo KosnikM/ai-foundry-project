@@ -331,3 +331,20 @@ module "networking" {
     "privatelink.azure-api.net"
   ]
 }
+
+module "security" {
+  source              = "../../modules/security"
+  resource_group_name = azurerm_resource_group.security.name
+  location            = local.location
+  tags                = local.default_tags
+  firewall_private_ip = "10.0.1.4"
+  firewall_subnet_id  = module.networking.subnet_ids["hub-AzureFirewallSubnet"]
+  bastion_subnet_id   = module.networking.subnet_ids["hub-AzureBastionSubnet"]
+  jumpbox_subnet_id   = module.networking.subnet_ids["hub-snet-jumpbox"]
+  hub_vnet_id            = module.networking.vnets_id["hub"]
+  jumpbox_admin_password = "Placeholder#2024!"
+  spoke_subnet_ids    = [
+    for key, id in module.networking.subnet_ids
+    : id if startswith(key, "spoke-")
+  ]
+}
